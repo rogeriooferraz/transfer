@@ -1,0 +1,87 @@
+#!/bin/bash
+
+# transfer - Copy contents while preserving timestamps
+# Copyright (c) 2025 Rogerio O. Ferraz <rogerio.o.ferraz@gmail.com>
+
+# MIT License
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+set -euo pipefail
+
+SCRIPTNAME="$(basename -- ${0})"
+
+USAGE="Usage: ${SCRIPTNAME} <source pattern> <destination pattern>
+
+transfer - Copy contents while preserving timestamps
+
+Copy content from source files to destination files, preserving timestamps.
+
+Useful when you want to replace the contents of files while keeping their original date and time properties unchanged.
+
+ARGUMENTS:
+  <source pattern>      : Source files pattern (e.g., fixed_Screenshot*.png)
+  <destination pattern> : Destination files pattern (e.g., Screenshot*.png)
+
+Examples:
+
+Replace screenshots with fixed versions, preserving timestamps
+${SCRIPTNAME} fixed_Screenshot*.png Screenshot*.png
+Result: All Screenshot*.png files have the content of fixed_Screenshot*.png files but keep their own original timestamps.
+"
+
+if [ "$#" -ne 2 ]; then
+  echo "error: invalid number of arguments" >&2
+  exit 1
+fi
+
+if [ "${1}" = "-h" ] || [ "${1}" = "--help" ]; then
+  echo "${USAGE}"
+  exit 0
+fi
+
+SRC_PATTERN="${1}"
+DST_PATTERN="${2}"
+
+readarray -t SRC_FILES < <(compgen -G "${SRC_PATTERN}" | sort)
+readarray -t DST_FILES < <(compgen -G "${DST_PATTERN}" | sort)
+
+if [ "${#SRC_FILES[@]}" -ne "${#DST_FILES[@]}" ]; then
+  echo "error: number of source and destination files does not match: "${#SRC_FILES[@]}" vs "${#DST_FILES[@]}"" >&2
+  exit 1
+fi
+
+for i in "${!SRC_FILES[@]}"; do
+  SRC_FILE="${SRC_FILES[$i]}"
+  DST_FILE="${DST_FILES[$i]}"
+
+  if [ ! -f "${SRC_FILE}" ]; then
+    echo "error: source file not found: ${SRC_FILE}" >&2
+    exit 1
+  fi
+  if [ ! -f "${DST_FILE}" ]; then
+    echo "error: destination file not found: ${DST_FILE}" >&2
+    exit 1
+  fi
+
+  touch -r "${DST_FILE}" "${SRC_FILE}"
+  mv -- "${SRC_FILE}" "${DST_FILE}"
+done
+
+exit 0
