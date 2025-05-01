@@ -1,8 +1,11 @@
 # transfer
 
 ## Overview
-**`transfer`** is a command-line utility to copy contents, from
-a source to a destination, while preserving the destination timestamps.
+**`transfer`** - Copy contents and preserve timestamps
+
+A command-line utility to copy contents, from a file or set of files,
+to corresponding destination file(s), while preserving the destination
+timestamps.
 
 It supports the following use cases:
 
@@ -12,8 +15,6 @@ It supports the following use cases:
 It is useful when you want to **replace files by updated versions**
 (e.g. screenshots, pictures, documents) while **keeping their original
 time/date metadata**, thus preserving sorting order and history.
-
----
 
 ## Motivation
 
@@ -28,8 +29,6 @@ Manually copying and touching each file is tedious and error-prone.
 This script automates the process with **wildcard pattern support**
 and **safe matching**.
 
----
-
 ## Features
 - Supports **wildcards** (globbing) for both source and destination
 file groups.
@@ -39,30 +38,20 @@ files.
 - **Preserves** timestamps (both access and modification times).
 - **Safety check**: aborts if the number of files does not match.
 
----
-
-## Installation on Linux
-
-```bash
-cd /tmp
-git clone git@github.com:rogeriooferraz/transfer.git
-sudo cp transfer/transfer /usr/local/bin/
-sudo chmod +x /usr/local/bin/transfer
-```
-
----
-
 ## Usage
 
-```bash
-./transfer "source_pattern" "destination_pattern"
 ```
+transfer [OPTIONS] source_pattern dest_pattern
 
-### Parameters
-- **`source_pattern`**: Wildcard pattern for files providing
-**new content**.
-- **`destination_pattern`**: Wildcard pattern for files to
-**receive content** (timestamps will be preserved).
+ARGUMENTS:
+  source_pattern : source file(s) naming pattern
+  dest_pattern   : destination file(s) naming pattern
+
+OPTIONS:
+  -D, --debug    : Enable debug output
+  -h, --help     : Display usage information
+  -V, --version  : Show current version
+```
 
 ### Example
 
@@ -74,24 +63,38 @@ Suppose you have:
 To update the originals with the fixed versions but
 **keep the old timestamps**:
 
-```bash
-./transfer "fixed_Screenshot*.png" "Screenshot*.png"
+```
+transfer "fixed_Screenshot*.png" "Screenshot*.png"
 ```
 This will:
-- Copy content from `fixed_Screenshot from 2025-04-27 10-00-00.png`
+- copy content from `fixed_Screenshot from 2025-04-27 10-00-00.png`
 to `Screenshot from 2025-04-27 10-00-00.png`
-- Preserve the original timestamp of the destination file
-
----
+- preserve date/time attributes of destination file
 
 ## Requirements
 
-- Bash shell
-- Standard GNU utilities (`cp`, `touch`, `ls`, `paste`)
+- Bash or compatible shell
 
-Tested on **Ubuntu 24.04** with **GNOME + X11** environment.
+## Testing
 
----
+Tested on **Ubuntu 24.04** with **GNOME** desktop environment.
+
+## Install
+
+```
+cd /tmp
+git clone git@github.com:rogeriooferraz/transfer.git
+sudo cp transfer/transfer /usr/local/bin/
+sudo chmod +x /usr/local/bin/transfer
+rm -rf /tmp/transfer
+cd -
+```
+
+## Uninstall
+
+```
+sudo rm /usr/local/bin/transfer
+```
 
 ## Notes
 - Files are matched **by sorted order** (`ls --sort=name`).
@@ -101,8 +104,14 @@ files does not match.
 - Existing destination files will be
 **overwritten without confirmation**.
 
----
-
 ## License
 
-MIT License — free to use, modify, and distribute.
+This project is licensed under the MIT License.<br>
+It is free and open source software: you can freely use it, change it, and redistribute it.<br>
+There is NO WARRANTY, to the extent permitted by law.
+
+**Project page**: https://github.com/rogeriooferraz/transfer
+
+## Author
+
+Rogerio O. Ferraz (<rogerio.o.ferraz@gmail.com>)

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# transfer - Copy contents while preserving timestamps
+# transfer - Copy contents and preserve timestamps
 # Copyright (c) 2025 Rogerio O. Ferraz <rogerio.o.ferraz@gmail.com>
 
 # MIT License
@@ -27,33 +27,59 @@ set -euo pipefail
 
 SCRIPTNAME="$(basename -- ${0})"
 
-USAGE="Usage: ${SCRIPTNAME} <source pattern> <destination pattern>
+USAGE="
+transfer - Copy contents and preserve timestamps
 
-transfer - Copy contents while preserving timestamps
+Copy content from source files to destination files, preserving the timestamps of destination files.
 
-Copy content from source files to destination files, preserving timestamps.
-
-Useful when you want to replace the contents of files while keeping their original date and time properties unchanged.
+Usage: ${SCRIPTNAME} [OPTIONS] source_pattern dest_pattern
 
 ARGUMENTS:
-  <source pattern>      : Source files pattern (e.g., fixed_Screenshot*.png)
-  <destination pattern> : Destination files pattern (e.g., Screenshot*.png)
+  source_pattern : source file(s) naming pattern
+  dest_pattern   : destination file(s) naming pattern
 
-Examples:
+OPTIONS:
+  -D, --debug    : Enable debug output
+  -h, --help     : Display usage information
+  -V, --version  : Show current version
 
-Replace screenshots with fixed versions, preserving timestamps
-${SCRIPTNAME} fixed_Screenshot*.png Screenshot*.png
-Result: All Screenshot*.png files have the content of fixed_Screenshot*.png files but keep their own original timestamps.
+Example:
+
+  $ ${SCRIPTNAME} fixed_Screenshot*.png Screenshot*.png
+
+  Move contents of fixed_Screenshot*.png files to Screenshot*.png files,
+  while keeping the timestamps of Screenshot*.png files unchanged
 "
 
+# Defaults
+VERSION="${SCRIPTNAME} version 1.0.1"
+
+# Options
+while [ ${#} -gt 0 ] ; do
+  case "${1:-}" in
+    --debug|-D)
+      shift
+      set -x
+      ;;
+    --help|-h)
+      echo "${USAGE}"
+      exit 0
+      ;;
+    --version|-V)
+      echo "${VERSION}"
+      exit 0
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
+# Validate user input
 if [ "$#" -ne 2 ]; then
   echo "error: invalid number of arguments" >&2
+  echo "See '${SCRIPTNAME} --help' for more information" >&2
   exit 1
-fi
-
-if [ "${1}" = "-h" ] || [ "${1}" = "--help" ]; then
-  echo "${USAGE}"
-  exit 0
 fi
 
 SRC_PATTERN="${1}"
@@ -64,7 +90,8 @@ readarray -t DST_FILES < <(compgen -G "${DST_PATTERN}" | sort)
 
 if [ "${#SRC_FILES[@]}" -ne "${#DST_FILES[@]}" ]; then
   echo "error: number of source and destination files does not match: "${#SRC_FILES[@]}" vs "${#DST_FILES[@]}"" >&2
-  exit 1
+  echo "See '${SCRIPTNAME} --help' for more information" >&2
+  exit 2
 fi
 
 for i in "${!SRC_FILES[@]}"; do
@@ -73,11 +100,11 @@ for i in "${!SRC_FILES[@]}"; do
 
   if [ ! -f "${SRC_FILE}" ]; then
     echo "error: source file not found: ${SRC_FILE}" >&2
-    exit 1
+    exit 3
   fi
   if [ ! -f "${DST_FILE}" ]; then
     echo "error: destination file not found: ${DST_FILE}" >&2
-    exit 1
+    exit 4
   fi
 
   touch -r "${DST_FILE}" "${SRC_FILE}"
