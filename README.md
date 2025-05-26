@@ -106,8 +106,7 @@ files does not match.
 
 ## License
 
-This project is licensed under the MIT License.<br>
-It is free and open source software: you can freely use it, change it, and redistribute it.<br>
+This is free and open source software, under the terms of MIT License.<br>
 There is NO WARRANTY, to the extent permitted by law.
 
 **Project page**: https://github.com/rogeriooferraz/transfer

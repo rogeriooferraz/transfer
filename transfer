@@ -51,8 +51,13 @@ Example:
   while keeping the timestamps of Screenshot*.png files unchanged
 "
 
-# Defaults
-VERSION="${SCRIPTNAME} version 1.0.1"
+VERSION="
+${SCRIPTNAME} 1.0.1
+Copyright (c) 2025 Rogerio O. Ferraz <rogerio.o.ferraz@gmail.com>
+MIT License <https://github.com/rogeriooferraz/transfer/blob/main/LICENSE>
+This is free and open source software.
+There is NO WARRANTY, to the extent permitted by law.
+"
 
 # Options
 while [ ${#} -gt 0 ] ; do
