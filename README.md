@@ -83,7 +83,7 @@ Tested on **Ubuntu 24.04** with **GNOME** desktop environment.
 
 ```
 cd /tmp
-git clone git@github.com:rogeriooferraz/transfer.git
+git clone https://github.com/rogeriooferraz/transfer.git
 sudo cp transfer/transfer /usr/local/bin/
 sudo chmod +x /usr/local/bin/transfer
 rm -rf /tmp/transfer
