@@ -60,7 +60,7 @@ There is NO WARRANTY, to the extent permitted by law.
 "
 
 # Options
-while [ ${#} -gt 0 ] ; do
+while [ "${#}" -gt 0 ] ; do
   case "${1:-}" in
     --debug|-D)
       shift
@@ -93,10 +93,19 @@ DST_PATTERN="${2}"
 readarray -t SRC_FILES < <(compgen -G "${SRC_PATTERN}" | sort)
 readarray -t DST_FILES < <(compgen -G "${DST_PATTERN}" | sort)
 
+if [ "${#SRC_FILES[@]}" -eq 0 ] ; then
+  echo "error: invalid source files" >&2
+  exit 2
+fi
+
+if [ "${#DST_FILES[@]}" -eq 0 ] ; then
+  echo "error: invalid destination files" >&2
+  exit 3
+fi
+
 if [ "${#SRC_FILES[@]}" -ne "${#DST_FILES[@]}" ]; then
   echo "error: number of source and destination files does not match: "${#SRC_FILES[@]}" vs "${#DST_FILES[@]}"" >&2
-  echo "See '${SCRIPTNAME} --help' for more information" >&2
-  exit 2
+  exit 4
 fi
 
 for i in "${!SRC_FILES[@]}"; do
@@ -105,11 +114,11 @@ for i in "${!SRC_FILES[@]}"; do
 
   if [ ! -f "${SRC_FILE}" ]; then
     echo "error: source file not found: ${SRC_FILE}" >&2
-    exit 3
+    exit 5
   fi
   if [ ! -f "${DST_FILE}" ]; then
     echo "error: destination file not found: ${DST_FILE}" >&2
-    exit 4
+    exit 6
   fi
 
   touch -r "${DST_FILE}" "${SRC_FILE}"
