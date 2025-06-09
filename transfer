@@ -94,12 +94,12 @@ readarray -t SRC_FILES < <(compgen -G "${SRC_PATTERN}" | sort)
 readarray -t DST_FILES < <(compgen -G "${DST_PATTERN}" | sort)
 
 if [ "${#SRC_FILES[@]}" -eq 0 ] ; then
-  echo "error: invalid source files" >&2
+  echo "error: source pattern does not match any file: ${SRC_PATTERN}" >&2
   exit 2
 fi
 
 if [ "${#DST_FILES[@]}" -eq 0 ] ; then
-  echo "error: invalid destination files" >&2
+  echo "error: dest pattern does not match any file: ${DST_PATTERN}" >&2
   exit 3
 fi
 
